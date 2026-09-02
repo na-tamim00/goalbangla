@@ -1,0 +1,6 @@
+{
+  "name": "GoalBangla | গোলবাংলা - Multilingual Football News & Intelligence Platform",
+  "description": "Production-grade Bangla-first multilingual football media and intelligence platform featuring live scores, breaking news, match centre, transfers, editorial CMS, standings, and tactical analysis.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
