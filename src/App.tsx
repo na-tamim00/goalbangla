@@ -5,6 +5,7 @@ import { Header } from './components/common/Header';
 import { Footer } from './components/common/Footer';
 import { LiveScoreStrip } from './components/common/LiveScoreStrip';
 import { SearchModal } from './components/search/SearchModal';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
 
 // Home Widgets
 import { HeroSection } from './components/home/HeroSection';
@@ -99,10 +100,7 @@ const MainAppContent: React.FC = () => {
       {/* Global Ticker & Live Score Strip (visible on all pages) */}
       <LiveScoreStrip
         onSelectMatch={(mId) => navigateTo('match', mId)}
-        onSelectBreaking={(bId) => {
-          // If breaking news links to an article or topic
-          navigateTo('article', 'arsenal-vs-manchester-city-tactical-report-2025');
-        }}
+        onViewAllMatches={() => navigateTo('live-matches')}
       />
 
       {/* Main View Router */}
@@ -119,15 +117,12 @@ const MainAppContent: React.FC = () => {
 
             <div className="max-w-7xl mx-auto px-4 lg:px-8 space-y-12">
               <TransferRadarWidget
-                onSelectTransfer={(tId) => navigateTo('transfers')}
-                onViewAll={() => navigateTo('transfers')}
+                onNavigate={navigateTo}
               />
 
               <LeagueSpotlight
                 onSelectArticle={(slug) => navigateTo('article', slug)}
-                onSelectClub={(slug) => navigateTo('club', slug)}
-                onSelectMatch={(mId) => navigateTo('match', mId)}
-                onViewStandings={(comp) => navigateTo('standings', comp)}
+                onNavigate={navigateTo}
               />
 
               <TacticalFeaturesSection
@@ -136,7 +131,7 @@ const MainAppContent: React.FC = () => {
               />
 
               <GalleryWidget
-                onSelectGallery={() => navigateTo('media')}
+                onNavigate={navigateTo}
               />
 
               <VideoWidget
@@ -152,10 +147,7 @@ const MainAppContent: React.FC = () => {
         {currentView === 'article' && viewParam && (
           <ArticleDetailPage
             slug={viewParam}
-            onSelectArticle={(slug) => navigateTo('article', slug)}
-            onSelectClub={(clubSlug) => navigateTo('club', clubSlug)}
-            onSelectPlayer={(playerSlug) => navigateTo('player', playerSlug)}
-            onSelectMatch={(mId) => navigateTo('match', mId)}
+            onNavigate={navigateTo}
             onBack={navigateBack}
           />
         )}
@@ -164,9 +156,7 @@ const MainAppContent: React.FC = () => {
         {currentView === 'match' && viewParam && (
           <MatchCentre
             matchId={viewParam}
-            onSelectClub={(clubSlug) => navigateTo('club', clubSlug)}
-            onSelectPlayer={(playerSlug) => navigateTo('player', playerSlug)}
-            onSelectArticle={(slug) => navigateTo('article', slug)}
+            onNavigate={navigateTo}
             onBack={navigateBack}
           />
         )}
@@ -182,8 +172,7 @@ const MainAppContent: React.FC = () => {
         {/* VIEW: TRANSFERS RADAR */}
         {currentView === 'transfers' && (
           <TransfersPage
-            onSelectClub={(clubSlug) => navigateTo('club', clubSlug)}
-            onSelectPlayer={(playerSlug) => navigateTo('player', playerSlug)}
+            onNavigate={navigateTo}
           />
         )}
 
@@ -263,10 +252,7 @@ const MainAppContent: React.FC = () => {
       <SearchModal
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
-        onSelectArticle={(slug) => navigateTo('article', slug)}
-        onSelectMatch={(mId) => navigateTo('match', mId)}
-        onSelectClub={(slug) => navigateTo('club', slug)}
-        onSelectPlayer={(slug) => navigateTo('player', slug)}
+        onNavigate={navigateTo}
       />
 
     </div>
@@ -275,10 +261,12 @@ const MainAppContent: React.FC = () => {
 
 export default function App() {
   return (
-    <LanguageProvider>
-      <AuthProvider>
-        <MainAppContent />
-      </AuthProvider>
-    </LanguageProvider>
+    <ErrorBoundary>
+      <LanguageProvider>
+        <AuthProvider>
+          <MainAppContent />
+        </AuthProvider>
+      </LanguageProvider>
+    </ErrorBoundary>
   );
 }

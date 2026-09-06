@@ -88,6 +88,7 @@ export interface Article {
   imageCaption?: string;
   imageCredit?: string;
   authorId: string;
+  author?: Author;
   status: ArticleStatus;
   publishedAt: string;
   updatedAt: string;
@@ -149,7 +150,10 @@ export interface Club {
   stadium: string;
   stadiumCapacity: number;
   manager: string;
+  banglaManager?: string;
   founded: number;
+  foundedYear?: number;
+  trophies?: Array<{ name: string; count: number }>;
   competitionId: string;
   primaryColor: string;
   secondaryColor: string;
@@ -168,6 +172,7 @@ export interface Player {
   position: 'GK' | 'DF' | 'MF' | 'FW';
   banglaPosition: string;
   number: number;
+  jerseyNumber?: number;
   clubId: string;
   birthDate: string;
   age: number;
@@ -182,6 +187,7 @@ export interface Player {
     yellowCards: number;
     redCards: number;
     rating: number;
+    passAccuracy?: number;
   };
   bio: string;
   banglaBio: string;
@@ -197,6 +203,9 @@ export interface MatchEvent {
   type: 'goal' | 'penalty_goal' | 'own_goal' | 'yellow_card' | 'red_card' | 'substitution' | 'var';
   clubId: string;
   playerId: string;
+  playerName?: string;
+  banglaPlayerName?: string;
+  teamSide?: 'home' | 'away';
   assistPlayerId?: string;
   description: string;
   banglaDescription: string;
@@ -208,6 +217,8 @@ export interface MatchLineupPlayer {
   position: string;
   isCaptain?: boolean;
   isStarter: boolean;
+  name?: string;
+  banglaName?: string;
 }
 
 export interface MatchStatistics {
@@ -222,6 +233,16 @@ export interface MatchStatistics {
   passes: [number, number];
   passAccuracy: [number, number]; // %
   offsides: [number, number];
+  possessionHome?: number;
+  possessionAway?: number;
+  homeExpectedGoals?: number;
+  awayExpectedGoals?: number;
+  shotsOnTargetHome?: number;
+  shotsOnTargetAway?: number;
+  shotsTotalHome?: number;
+  shotsTotalAway?: number;
+  cornersHome?: number;
+  cornersAway?: number;
 }
 
 export interface Match {
@@ -230,6 +251,9 @@ export interface Match {
   season: string;
   homeClubId: string;
   awayClubId: string;
+  homeClub?: Club;
+  awayClub?: Club;
+  competition?: Competition;
   homeScore: number;
   awayScore: number;
   homePenaltyScore?: number;
@@ -237,14 +261,23 @@ export interface Match {
   status: MatchStatus;
   minute: number;
   matchDate: string; // ISO string
+  dateTime?: string;
   venue: string;
   referee: string;
   events: MatchEvent[];
   stats: MatchStatistics;
   homeFormation: string;
   awayFormation: string;
-  homeLineup: MatchLineupPlayer[];
-  awayLineup: MatchLineupPlayer[];
+  homeLineup: any;
+  awayLineup: any;
+  commentary?: Array<{
+    id?: string;
+    minute: number;
+    text?: string;
+    comment?: string;
+    banglaComment?: string;
+    isHighlight?: boolean;
+  }>;
   relatedArticleId?: string;
   roundOrGameweek: string;
   banglaRound: string;
@@ -357,6 +390,7 @@ export interface Gallery {
   }>;
   photographer: string;
   date: string;
+  publishedAt?: string;
   tags: string[];
 }
 
@@ -368,10 +402,13 @@ export interface VideoItem {
   videoUrl: string;
   thumbnail: string;
   durationSeconds: number;
+  duration?: string;
+  youtubeId?: string;
   category: string;
   description: string;
   banglaDescription: string;
   date: string;
+  publishedAt?: string;
   viewsCount: number;
   source: 'youtube' | 'vimeo' | 'direct';
 }

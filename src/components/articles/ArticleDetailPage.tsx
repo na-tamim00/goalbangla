@@ -106,6 +106,54 @@ export const ArticleDetailPage: React.FC<ArticleDetailPageProps> = ({ slug, onNa
     ? article.translations.en.blocks 
     : article.blocks;
 
+  // Dynamic SEO Title and NewsArticle JSON-LD structured data
+  useEffect(() => {
+    if (!article) return;
+    const prevTitle = document.title;
+    document.title = `${displayTitle} | GoalBangla`;
+
+    let scriptTag = document.getElementById('json-ld-news-article') as HTMLScriptElement | null;
+    if (!scriptTag) {
+      scriptTag = document.createElement('script');
+      scriptTag.id = 'json-ld-news-article';
+      scriptTag.type = 'application/ld+json';
+      document.head.appendChild(scriptTag);
+    }
+
+    const jsonLd = {
+      '@context': 'https://schema.org',
+      '@type': 'NewsArticle',
+      'headline': displayTitle,
+      'description': displayExcerpt,
+      'image': [article.featuredImage],
+      'datePublished': article.publishedAt,
+      'dateModified': article.updatedAt || article.publishedAt,
+      'author': {
+        '@type': 'Person',
+        'name': author?.name || 'GoalBangla Sports Desk'
+      },
+      'publisher': {
+        '@type': 'Organization',
+        'name': 'GoalBangla',
+        'logo': {
+          '@type': 'ImageObject',
+          'url': 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=400&q=80'
+        }
+      },
+      'mainEntityOfPage': {
+        '@type': 'WebPage',
+        '@id': window.location.href
+      }
+    };
+    scriptTag.textContent = JSON.stringify(jsonLd);
+
+    return () => {
+      document.title = prevTitle;
+      const el = document.getElementById('json-ld-news-article');
+      if (el) el.remove();
+    };
+  }, [article, displayTitle, displayExcerpt, author]);
+
   const handleLike = () => {
     if (!liked) {
       setLiked(true);
