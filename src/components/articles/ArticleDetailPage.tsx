@@ -69,44 +69,18 @@ export const ArticleDetailPage: React.FC<ArticleDetailPageProps> = ({ slug, onNa
       .finally(() => setIsLoading(false));
   }, [slug]);
 
-  if (isLoading) {
-    return (
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-3 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-sm text-slate-400 font-medium">প্রতিবেদন লোড হচ্ছে...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!article) {
-    return (
-      <div className="max-w-3xl mx-auto py-20 px-4 text-center space-y-4">
-        <h2 className="text-2xl font-bold text-white">প্রতিবেদনটি পাওয়া যায়নি</h2>
-        <p className="text-slate-400 text-sm">সম্ভবত লিংকটি পরিবর্তিত হয়েছে অথবা সরিয়ে নেওয়া হয়েছে।</p>
-        <button
-          onClick={onBack}
-          className="px-6 py-2.5 rounded-xl bg-emerald-500 text-black font-bold text-sm"
-        >
-          হোমপেজে ফিরে যান
-        </button>
-      </div>
-    );
-  }
-
   // Determine active translation view
-  const hasEnTranslation = !!article.translations?.en;
+  const hasEnTranslation = !!article?.translations?.en;
   const isViewingEn = selectedLanguageTab === 'en' || (language === 'en' && selectedLanguageTab !== 'bn');
 
-  const displayTitle = isViewingEn && article.translations?.en?.title ? article.translations.en.title : article.title;
-  const displaySubtitle = isViewingEn && article.translations?.en?.subtitle ? article.translations.en.subtitle : article.subtitle;
-  const displayExcerpt = isViewingEn && article.translations?.en?.excerpt ? article.translations.en.excerpt : article.excerpt;
-  const displayBlocks = isViewingEn && article.translations?.en?.blocks && article.translations.en.blocks.length > 0 
+  const displayTitle = (isViewingEn && article?.translations?.en?.title) ? article.translations.en.title : (article?.title || '');
+  const displaySubtitle = (isViewingEn && article?.translations?.en?.subtitle) ? article.translations.en.subtitle : (article?.subtitle || '');
+  const displayExcerpt = (isViewingEn && article?.translations?.en?.excerpt) ? article.translations.en.excerpt : (article?.excerpt || '');
+  const displayBlocks = (isViewingEn && article?.translations?.en?.blocks && article.translations.en.blocks.length > 0) 
     ? article.translations.en.blocks 
-    : article.blocks;
+    : (article?.blocks || []);
 
-  // Dynamic SEO Title and NewsArticle JSON-LD structured data
+  // Dynamic SEO Title and NewsArticle JSON-LD structured data (Hooks must always execute unconditionally)
   useEffect(() => {
     if (!article) return;
     const prevTitle = document.title;
@@ -178,6 +152,32 @@ export const ArticleDetailPage: React.FC<ArticleDetailPageProps> = ({ slug, onNa
     setNewCommentText('');
     setNewCommentName('');
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 border-3 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-sm text-slate-400 font-medium">প্রতিবেদন লোড হচ্ছে...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!article) {
+    return (
+      <div className="max-w-3xl mx-auto py-20 px-4 text-center space-y-4">
+        <h2 className="text-2xl font-bold text-white">প্রতিবেদনটি পাওয়া যায়নি</h2>
+        <p className="text-slate-400 text-sm">সম্ভবত লিংকটি পরিবর্তিত হয়েছে অথবা সরিয়ে নেওয়া হয়েছে।</p>
+        <button
+          onClick={onBack}
+          className="px-6 py-2.5 rounded-xl bg-emerald-500 text-black font-bold text-sm"
+        >
+          হোমপেজে ফিরে যান
+        </button>
+      </div>
+    );
+  }
 
   return (
     <article className="max-w-4xl mx-auto px-4 lg:px-8 py-8 space-y-8 animate-in fade-in duration-200">
